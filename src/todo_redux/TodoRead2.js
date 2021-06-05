@@ -1,17 +1,34 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {fetchRead, modify, remove} from "./todoService";
+import {useDispatch, useSelector} from "react-redux";
+import {changeCri, clearCri, stateCri, stateCurrent} from "./todoReduxSlice";
+import {fetchRead, modify, remove} from "../todo/todoService";
 
-const initState = {
-    tno:0,
-    title:'',
-    content:'',
+
+const initTodo =  {
+    tno: 0,
+    title: '',
+    content: '',
     regDate:'',
-    modDate:''
+    modDate: ''
 }
 
-const TodoRead = ({tno, clearCri}) => {
+const TodoRead2 = () => {
 
-    const [todo, setTodo] = useState(initState)
+    const dispatch = useDispatch()
+    //{tno:xx}
+    const current = useSelector(stateCurrent)
+    const cri = useSelector(stateCri)
+
+    const [todo, setTodo] = useState(initTodo)
+
+    useEffect(() => {
+
+        if(current.tno === 0) { return }
+
+        fetchRead(current.tno).then(todoObj => setTodo(todoObj))
+
+    },[current.tno])
+
 
     const change = useCallback((e) => {
         e.preventDefault()
@@ -22,39 +39,26 @@ const TodoRead = ({tno, clearCri}) => {
         setTodo({...todo})
     })
 
+
     const clickModify = () => {
 
-        modify(todo).then(result => {
-            clearCri()
-            setTodo({...initState})
-        })
-
+        modify(todo).then(result => dispatch(changeCri({...cri})))
     }
 
     const clickRemove = () => {
 
         remove(todo.tno).then(result => {
-            clearCri()
-            setTodo({...initState})
+            dispatch(clearCri())
+            setTodo({...initTodo})
         })
+
     }
-
-    useEffect(() => {
-
-        console.log("todoRead", tno)
-
-        if(tno === 0) { return }
-
-        fetchRead(tno).then(todoObj => setTodo(todoObj))
-
-    },[tno])
-
 
     return (
         <div>
-            <h4>Todo Read/Modify/Remove</h4>
+            <h4>Todo Read 2 </h4>
             <div>
-                <input type={'text'} name={'tno'} value={todo.tno} onChange={change}/>
+                <input type={'text'} name={'tno'} value={todo.tno === 0? '':todo.tno} onChange={change}/>
             </div>
             <div>
                 <input type={'text'} name={'title'} value={todo.title}  onChange={change}/>
@@ -73,7 +77,7 @@ const TodoRead = ({tno, clearCri}) => {
                 <button onClick={() => clickRemove() }>REMOVE</button>
             </div>
         </div>
-    );
+    )
 };
 
-export default TodoRead;
+export default TodoRead2;
