@@ -1,21 +1,18 @@
 import React, {useState} from 'react';
-import {useDispatch} from "react-redux";
-import {registerTodo} from "../todo/todoService";
-
-
+import {register} from "../todo/todoService";
 import { useHistory } from "react-router-dom";
-import {clearCri} from "./todoReduxSlice";
+import {initCri} from "./todoService";
+
 
 
 const initState = {
-    title:'',
-    content:''
+    title: '',
+    content: ''
 }
 
 const TodoInput3 = () => {
 
-    const dispatch = useDispatch()
-    let history = useHistory();
+    const history = useHistory()
 
     const [todo, setTodo] = useState(initState)
 
@@ -26,25 +23,19 @@ const TodoInput3 = () => {
         setTodo({...todo})
     }
 
-    const clickRegister = () => {
+    const clickRegister = async () => {
 
-        const result = registerTodo(todo)
+        const result = await register(todo)
 
-        result.then(result => {
+        alert(result)
 
-            alert(result)
+        history.push("list?" +new URLSearchParams(initCri))
 
-            dispatch(clearCri())
-
-            history.push("/list")
-
-        })
     }
-
 
     return (
         <div>
-            <h4>Todo Input</h4>
+            <h4>Todo Input3</h4>
             <div>
                 <input type={'text'} name={'title'} value={todo.title} onChange={(e) => changeTodo(e)}/>
             </div>
@@ -54,6 +45,7 @@ const TodoInput3 = () => {
             <div>
                 <button onClick={() => clickRegister()}> Register</button>
             </div>
+
         </div>
     );
 };

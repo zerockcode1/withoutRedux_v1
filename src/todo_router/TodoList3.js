@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from "react-redux";
-import {changeCurrent, stateCri} from "./todoReduxSlice";
-import {fetchPage} from "../todo/todoService";
+import { useLocation } from 'react-router-dom'
+import qs from 'query-string'
+import {checkCri, initCri} from "./todoService";
+
 import PageList3 from "./PageList3";
-import TodoSearch2 from "./TodoSearch2";
-import queryString from 'query-string';
-import { useHistory } from "react-router-dom";
+import {fetchPage} from "./todoService";
 
 const initResult = {
     dtoList:[]
@@ -13,37 +12,32 @@ const initResult = {
 
 const TodoList3 = () => {
 
-    let history = useHistory()
+    const location = useLocation();
 
-    const dispatch = useDispatch()
-    const cri = useSelector(stateCri)
+
+    const [cri, setCri] = useState(initCri)
+
     const [result, setResult] = useState(initResult)
 
     useEffect(() => {
 
+        console.log("useEffect...")
+
+        const paramCri = qs.parse(location.search)
+
         const result = fetchPage(cri)
+        result.then(result => {
+            setResult(result)
+            setCri(paramCri)
+        })
 
-        const queryString  = new URLSearchParams(cri).toString()
-
-        console.log("queryString", queryString)
-
-        result.then(result => setResult(result))
-
-        history.push("/list?" + queryString)
-
-
-    },[cri])
-
-    const clickRead = (tno) => {
-        dispatch(changeCurrent({tno:tno}))
-    }
+    },[location])
 
     return (
         <div>
-            <h3>Todo List with Router</h3>
-            <TodoSearch2></TodoSearch2>
-            {result?.dtoList.map(todo => <li key={todo.tno} onClick={() => clickRead(todo.tno)}>{todo.tno} --- {todo.title}</li>)}
-            <PageList3 {...result}></PageList3>
+            <h2>Todo List 3</h2>
+            {result?.dtoList.map(todo => <li key={todo.tno} >{todo.tno} --- {todo.title}</li>)}
+            <PageList3 {...result} cri ={cri}></PageList3>
         </div>
     );
 };

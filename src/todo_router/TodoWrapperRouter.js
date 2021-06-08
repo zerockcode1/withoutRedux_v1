@@ -7,9 +7,9 @@ import {
 } from "react-router-dom";
 
 
-import TodoRead2 from "../todo_redux/TodoRead2";
 import TodoInput3 from "./TodoInput3";
 import TodoList3 from "./TodoList3";
+
 
 
 const TodoWrapperRouter = () => {
@@ -26,7 +26,7 @@ const TodoWrapperRouter = () => {
             </Route>
 
             <Router path={"/read"}>
-                <TodoRead2></TodoRead2>
+
             </Router>
             </Switch>
         </div>

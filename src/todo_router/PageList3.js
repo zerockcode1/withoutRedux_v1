@@ -1,13 +1,16 @@
 import React from 'react';
+import {useHistory} from "react-router-dom";
 
-import {useDispatch} from "react-redux";
-import {movePage} from "./todoReduxSlice";
+const PageList3 = ({pageList, start, end, page, prev, next, cri}) => {
 
-const PageList3 = ({pageList, start, end, page, prev, next}) => {
 
-    const dispatch = useDispatch()
+    let history = useHistory()
+
+
     const clickMovePage = (num) => {
-        dispatch(movePage({page: num}))
+
+        history.push("/list?" + new URLSearchParams({...cri, page:num}))
+
     }
 
     return (
